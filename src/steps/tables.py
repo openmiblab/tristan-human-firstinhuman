@@ -5,14 +5,14 @@ import numpy as np
 import pingouin as pg
 import pydmr
 
-root = os.path.dirname(os.getcwd())
+root = os.getcwd()
 
-resultspath = os.path.join(root, 'Output', 'Tables')
+resultspath = os.path.join(root, 'build', 'Tables')
 
 
 def table_demographics():
 
-    file = os.path.join(root, 'Output', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data.dmr')
     demographics = [
         'Age', 'BMI', 'Height', 'Weight', 
         'Crea', 'Urea', 
@@ -31,7 +31,7 @@ def table_demographics():
 
 def table_lft_visits():
 
-    file = os.path.join(root, 'Output', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data.dmr')
 
     init = ['PreALP', 'PreALT', 'PreAlb', 'PreBili', 'PreConBili', 'PreConTotBili']
     dmr = pydmr.read(file, 'pandas', study='control', parameter=init)

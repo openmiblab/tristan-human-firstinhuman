@@ -1,12 +1,12 @@
 import os
 import miblab
 
-root = os.path.dirname(os.getcwd())
+root = os.getcwd()
 
 
 def main():
 
-    path = os.path.join(root, 'Output')
+    path = os.path.join(root, 'build')
     figpath = os.path.join(path, 'Figs')
     tablepath = os.path.join(path, 'Tables')
 

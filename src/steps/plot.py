@@ -6,12 +6,12 @@ from matplotlib.colorbar import Colorbar
 import seaborn as sns
 import matplotlib.image as mpimg
 
-import data, calc
+from steps import data, calc
 
-root = os.path.dirname(os.getcwd())
+root = os.getcwd()
 
-tablespath = os.path.join(root, 'Output', 'Tables')
-resultspath = os.path.join(root, 'Output', 'Figs')
+tablespath = os.path.join(root, 'build', 'Tables')
+resultspath = os.path.join(root, 'build', 'Figs')
 if not os.path.exists(resultspath):
     os.makedirs(resultspath)
 

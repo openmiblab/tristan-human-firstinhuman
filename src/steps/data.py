@@ -2,8 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 import pydmr
+import miblab
 
-root = os.path.dirname(os.getcwd())
+root = os.getcwd()
 
 # To control how pandas interprets the csv's
 TYPES = {
@@ -34,9 +35,9 @@ EXCLUDE_CORREL = [
 
 def read(effect=False):
     if effect:
-        file = os.path.join(root, 'Output', 'DataEffect.dmr')
+        file = os.path.join(root, 'build', 'DataEffect.dmr')
     else:
-        file = os.path.join(root, 'Output', 'Data.dmr')
+        file = os.path.join(root, 'build', 'Data.dmr')
     data = pydmr.read(file, 'table')
     cols = ['subject', 'visit', 'parameter', 'value']
     return (
@@ -56,7 +57,7 @@ IND = {
 }
 
 def lookup_vals(parameters, prop):
-    file = os.path.join(root, 'Output', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data.dmr')
     data = pydmr.read(file)['data']
     if isinstance(parameters, str):
         return data[parameters][IND[prop]]
@@ -64,37 +65,39 @@ def lookup_vals(parameters, prop):
         return [data[p][IND[prop]] for p in parameters]
 
 def lookup_params(prop, value):
-    file = os.path.join(root, 'Output', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data.dmr')
     data = pydmr.read(file)['data']
     return [p for p in data if data[p][IND[prop]]==value]
 
 
 def extend_data():
 
-    # Take metadata with cluster
-    file = os.path.join(root, 'Data', 'MRI_metadata')
+    # Replace metadata with static metadata containing clusters
+    file = os.path.join(root, '_static', 'MRI_metadata')
     meta = pydmr.read(file)
-    for dataset in ['MRI_control', 'MRI_complete']:
-        file = os.path.join(root, 'Data', dataset)
+    folder = os.path.join(root, 'build')
+    for dataset in [
+            'tristan_humans_healthy_controls_all_results.dmr.zip', 
+            'tristan_humans_healthy_rifampicin_all_results.dmr.zip',
+        ]:
+        file = miblab.zenodo_fetch(dataset, folder, '15514373')
         dmr = pydmr.read(file)
         dmr['data'] = meta['data']
         dmr['columns'] = meta['columns']
-        file = os.path.join(root, 'Output', dataset)
         pydmr.write(file, dmr)
 
-    # Combine all data in a single dmr file
+    # Combine all data in a single Data.dmr file
     files = [
-        #os.path.join(root, 'Data', 'MRI.dmr'),
-        os.path.join(root, 'Output', 'MRI_control.dmr'),
-        os.path.join(root, 'Output', 'MRI_complete.dmr'),
-        os.path.join(root, 'Data', 'Clinical.dmr'),
+        os.path.join(folder, 'tristan_humans_healthy_controls_all_results.dmr.zip'),
+        os.path.join(folder, 'tristan_humans_healthy_rifampicin_all_results.dmr.zip'),
+        miblab.zenodo_fetch('tristan_humans_leeds_covariates.dmr.zip', folder, '15514373'),
     ]
-    file = os.path.join(root, 'Output', 'Data.dmr')
+    file = os.path.join(folder, 'Data.dmr')
     pydmr.concat(files, file)
-    pydmr.drop(file, subject=['SHF-007','SHF-010','SHF-016'])
+    pydmr.drop(file, subject=['SHF-007', 'SHF-010', 'SHF-016'])
     data = pydmr.read(file, 'nest')
 
-    # Compute standard deviations
+    # Compute standard deviations for derived parameters
     for subj in data['pars']:
         for study in data['pars'][subj]:
             try:
@@ -112,7 +115,7 @@ def extend_data():
             except KeyError:
                 pass
 
-    # Derive parameters
+    # Define derived parameters
     data['data'] = data['data'] | {
         'khe_slope': ['khe change per time', 'mL/min/100cm3/hr', 'float', 'MRI - liver', 'Dk(he)', 'NaN', 'HC'],
         'kbh_slope': ['kbh change per time', 'mL/min/100cm3/hr', 'float', 'MRI - liver', 'Dk(bh)', 'NaN', 'HC'],
@@ -127,6 +130,8 @@ def extend_data():
         'AvrConBili': ['Average Conjugated Bilirubin', 'umol/L', 'float', 'Blood - liver function test', 'CBil', 'NaN', 'Blood - liver function test'],
         'AvrConTotBili': ['Average Conjugated/total bilirubin', '%', 'float', 'Blood - liver function test', 'CTBil', 'NaN', 'Blood - liver function test'],
     }
+
+    # Compute derived parameters
     for subj in data['pars']:
         for study in data['pars'][subj]:
             try:
@@ -142,6 +147,7 @@ def extend_data():
             except KeyError:
                 pass
 
+    # Save results
     pydmr.write(file, data, 'nest')
 
 
@@ -179,8 +185,8 @@ def effect_data():
 
     # Parameters with uninteresting effect sizes
 
-    file = os.path.join(root, 'Output', 'Data.dmr')
-    result = os.path.join(root, 'Output', 'DataEffect.dmr')
+    file = os.path.join(root, 'build', 'Data.dmr')
+    result = os.path.join(root, 'build', 'DataEffect.dmr')
     pydmr.drop(file, result, parameter=NO_EFFECT+EXCLUDE_EFFECT, study='screening', subject=['1','5'])
 
 

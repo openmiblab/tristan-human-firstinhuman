@@ -1,16 +1,16 @@
 import os
+import math
 
 import numpy as np
 import pandas as pd
 import pingouin as pg
 import pydmr
 
-import data
-from funcs import around_sig
+from steps import data
 
-root = os.path.dirname(os.getcwd())
+root = os.getcwd()
 # Create directories for tables
-resultspath = os.path.join(root, 'Output', 'Tables')
+resultspath = os.path.join(root, 'build', 'Tables')
 
 
 # Exclude variables that are analytically related to others from correlation
@@ -90,7 +90,7 @@ def create_pivot():
 def derive_effect_size(abs=False):
 
     # Get all data as dataframe  
-    file = os.path.join(root, 'Output', 'DataEffect.dmr')
+    file = os.path.join(root, 'build', 'DataEffect.dmr')
 
     dmr = pydmr.read(file, 'pandas', study='control')
     df0 = dmr['pars'].pivot(columns='parameter', index='subject', values='value')
@@ -382,6 +382,26 @@ def correlations_control_single_submatrix(X, Y, filename):
     pval = corr.pivot(values='p-unc', index='X', columns='Y')
     file = os.path.join(resultspath, filename + '_pval.csv')
     pval.to_csv(file, na_rep="NaN")
+
+
+# Helper functions
+
+
+def _first_digit(x):
+    if np.isnan(x):
+        return x
+    return -int(math.floor(math.log10(abs(x))))
+
+def _round_sig(x, n):
+    # Round to n significant digits
+    if x==0:
+        return x
+    if np.isnan(x):
+        return x
+    return round(x, _first_digit(x) + (n-1))
+    
+def around_sig(x, n):
+    return np.array([_round_sig(v,n) for v in x])
 
 
 

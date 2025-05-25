@@ -1,9 +1,0 @@
-numpy
-scipy
-pandas
-matplotlib
-seaborn
-pingouin
-pylatex
-miblab
-pydmr

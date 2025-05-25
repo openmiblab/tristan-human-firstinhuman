@@ -1,0 +1,8 @@
+numpy
+pandas
+pingouin
+pydmr
+miblab[report,data]
+matplotlib
+seaborn
+
