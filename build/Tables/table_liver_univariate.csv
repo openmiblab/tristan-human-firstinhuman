@@ -1,0 +1,20 @@
+Name,Group,control,drug,Effect size (%),T,p-value
+Bilirubin (umol/L),Blood - liver function test,13.0 (2.6) ,22.0 (2.8) ,81.9 (52.0) ,-5.4,0.001
+Conjugated Bilirubin (umol/L),Blood - liver function test,4.7 (1.3) ,12.6 (6.2) ,146.0 (57.0) ,-3.1,0.02
+Albumin (g/L),Blood - liver function test,42.3 (1.7) ,40.9 (1.8) ,-4.15 (2.9) ,2.8,0.028
+Conjugated/total bilirubin (%),Blood - liver function test,36.2 (4.0) ,44.6 (5.3) ,23.1 (21.0) ,-2.0,0.092
+ALT (U/L),Blood - liver function test,20.8 (5.1) ,24.1 (6.5) ,17.4 (23.0) ,-1.6,0.163
+ALP (U/L),Blood - liver function test,67.8 (16.0) ,73.9 (21.0) ,-0.542 (11.0) ,-0.0,0.986
+Liver blood clearance (L/min),MRI - liver,0.265 (0.028) ,0.0199 (0.0044) ,-92.3 (2.5) ,14.6,0.0
+R1 at 45mins (1/sec),MRI - liver,2.33 (0.82) ,1.38 (0.083) ,-26.1 (3.2) ,12.1,0.0
+Hepatocellular uptake rate (mL/min/100cm3),MRI - liver,29.7 (4.5) ,2.17 (0.59) ,-92.6 (2.5) ,10.6,0.0
+RE for Sl at 20min (%),MRI - liver,66.0 (23.0) ,6.54 (1.7) ,-87.5 (1.9) ,8.8,0.0
+Delta R1 at 45mins (1/sec),MRI - liver,1.07 (0.81) ,0.136 (0.03) ,-77.1 (5.8) ,8.7,0.0
+AUC for Cl (0-35min) (mM*sec),MRI - liver,205.0 (100.0) ,25.8 (4.3) ,-81.9 (2.7) ,8.6,0.0
+RE for R1l at 20min (%),MRI - liver,86.9 (40.0) ,8.86 (1.5) ,-85.6 (1.9) ,8.3,0.0
+R1 (scan 2) (1/sec),MRI - liver,1.73 (0.44) ,1.32 (0.071) ,-11.7 (4.6) ,4.5,0.003
+Biliary excretion rate (mL/min/100cm3),MRI - liver,2.17 (0.54) ,0.791 (0.34) ,-48.7 (42.0) ,4.1,0.005
+Delta R1 (scan 2) (1/sec),MRI - liver,0.459 (0.43) ,0.0757 (0.018) ,-31.4 (76.0) ,3.1,0.017
+Liver extracellular volume fraction (mL/100cm3),MRI - liver,17.7 (6.5) ,21.5 (3.3) ,264.0 (420.0) ,-1.4,0.199
+Extracellular mean transit time (sec),MRI - liver,36.5 (11.0) ,43.0 (7.7) ,148.0 (240.0) ,-0.9,0.406
+Extracellular dispersion (%),MRI - liver,66.1 (16.0) ,70.4 (4.8) ,283.0 (550.0) ,-0.7,0.531
