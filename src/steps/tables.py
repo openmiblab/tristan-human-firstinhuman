@@ -12,7 +12,7 @@ resultspath = os.path.join(root, 'build', 'Tables')
 
 def table_demographics():
 
-    file = os.path.join(root, 'build', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
     demographics = [
         'Age', 'BMI', 'Height', 'Weight', 
         'Crea', 'Urea', 
@@ -31,7 +31,7 @@ def table_demographics():
 
 def table_lft_visits():
 
-    file = os.path.join(root, 'build', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
 
     init = ['PreALP', 'PreALT', 'PreAlb', 'PreBili', 'PreConBili', 'PreConTotBili']
     dmr = pydmr.read(file, 'pandas', study='control', parameter=init)

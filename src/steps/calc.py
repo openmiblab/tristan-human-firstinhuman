@@ -90,7 +90,7 @@ def create_pivot():
 def derive_effect_size(abs=False):
 
     # Get all data as dataframe  
-    file = os.path.join(root, 'build', 'DataEffect.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data_effect.dmr')
 
     dmr = pydmr.read(file, 'pandas', study='control')
     df0 = dmr['pars'].pivot(columns='parameter', index='subject', values='value')

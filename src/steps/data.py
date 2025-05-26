@@ -35,9 +35,9 @@ EXCLUDE_CORREL = [
 
 def read(effect=False):
     if effect:
-        file = os.path.join(root, 'build', 'DataEffect.dmr')
+        file = os.path.join(root, 'build', 'Data', 'all_data_effect.dmr')
     else:
-        file = os.path.join(root, 'build', 'Data.dmr')
+        file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
     data = pydmr.read(file, 'table')
     cols = ['subject', 'visit', 'parameter', 'value']
     return (
@@ -57,7 +57,7 @@ IND = {
 }
 
 def lookup_vals(parameters, prop):
-    file = os.path.join(root, 'build', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
     data = pydmr.read(file)['data']
     if isinstance(parameters, str):
         return data[parameters][IND[prop]]
@@ -65,7 +65,7 @@ def lookup_vals(parameters, prop):
         return [data[p][IND[prop]] for p in parameters]
 
 def lookup_params(prop, value):
-    file = os.path.join(root, 'build', 'Data.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
     data = pydmr.read(file)['data']
     return [p for p in data if data[p][IND[prop]]==value]
 
@@ -75,7 +75,7 @@ def extend_data():
     # Replace metadata with static metadata containing clusters
     file = os.path.join(root, '_static', 'MRI_metadata')
     meta = pydmr.read(file)
-    folder = os.path.join(root, 'build')
+    folder = os.path.join(root, 'build', 'Data')
     for dataset in [
             'tristan_humans_healthy_controls_all_results.dmr.zip', 
             'tristan_humans_healthy_rifampicin_all_results.dmr.zip',
@@ -92,7 +92,7 @@ def extend_data():
         os.path.join(folder, 'tristan_humans_healthy_rifampicin_all_results.dmr.zip'),
         miblab.zenodo_fetch('tristan_humans_leeds_covariates.dmr.zip', folder, '15514373'),
     ]
-    file = os.path.join(folder, 'Data.dmr')
+    file = os.path.join(folder, 'all_data.dmr')
     pydmr.concat(files, file)
     pydmr.drop(file, subject=['SHF-007', 'SHF-010', 'SHF-016'])
     data = pydmr.read(file, 'nest')
@@ -185,8 +185,8 @@ def effect_data():
 
     # Parameters with uninteresting effect sizes
 
-    file = os.path.join(root, 'build', 'Data.dmr')
-    result = os.path.join(root, 'build', 'DataEffect.dmr')
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
+    result = os.path.join(root, 'build', 'Data', 'all_data_effect.dmr')
     pydmr.drop(file, result, parameter=NO_EFFECT+EXCLUDE_EFFECT, study='screening', subject=['1','5'])
 
 
