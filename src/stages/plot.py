@@ -5,15 +5,14 @@ import matplotlib.pyplot as plt
 from matplotlib.colorbar import Colorbar
 import seaborn as sns
 import matplotlib.image as mpimg
+import pydmr
 
-from steps import data, calc
+from stages import data
 
-root = os.getcwd()
+root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 tablespath = os.path.join(root, 'build', 'Tables')
 resultspath = os.path.join(root, 'build', 'Figs')
-if not os.path.exists(resultspath):
-    os.makedirs(resultspath)
 
 
 sym = {
@@ -52,14 +51,13 @@ clr = {
 def _tstat_box_plots(ax):
 
     sig = 0.01
-    file = os.path.join(tablespath, 'univariate.csv')
+    file = os.path.join(tablespath, 'table_liver_univariate.csv')
     univ = pd.read_csv(file).set_index('parameter')
     univ['group'] = data.lookup_vals(univ.index.values, 'group')
     univ['cluster'] = data.lookup_vals(univ.index.values, 'cluster')
     univ['label'] = data.lookup_vals(univ.index.values, 'label')
-    univ = univ[univ['group'] != 'MRI - aorta']
     univ = univ.sort_values(by='cluster')
-    univ = univ[univ['p-unc'] < sig]
+    univ = univ[univ['p-value'] < sig]
     pars = univ.index.values
     cluster = univ['cluster'].values
     lbl = univ['label'].values
@@ -129,14 +127,15 @@ def _subject_line_plot(ax, par):
     ax.tick_params(axis='y', labelcolor='none')
 
     # Concatenate all data
-    vals, _ = data.read()
+    file = os.path.join(root, 'build', 'Data', 'all_data.dmr')
+    vals = pydmr.read(file, 'pandas')['pars']
 
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(linewidth)
 
     vals = vals[vals.parameter==par]
-    data_control = vals[vals.visit=='control']
-    data_drug = vals[vals.visit=='drug']
+    data_control = vals[vals.study=='control']
+    data_drug = vals[vals.study=='drug']
 
     for i, subj in enumerate(data_control.subject):
         x = ['1']
@@ -153,13 +152,12 @@ def _subject_line_plot(ax, par):
 def _subject_line_plots(fig):
 
     sig = 0.01
-    file = os.path.join(tablespath, 'univariate.csv')
+    file = os.path.join(tablespath, 'table_liver_univariate.csv')
     univ = pd.read_csv(file).set_index('parameter')
     univ['group'] = data.lookup_vals(univ.index.values, 'group')
     univ['cluster'] = data.lookup_vals(univ.index.values, 'cluster')
-    univ = univ[univ['group'] != 'MRI - aorta']
     univ = univ.sort_values(by='cluster')
-    univ = univ[univ['p-unc'] < sig]
+    univ = univ[univ['p-value'] < sig]
     pars = univ.index.values
 
     axes = fig.subplots(1, pars.size)
@@ -168,7 +166,7 @@ def _subject_line_plots(fig):
 
 
 
-def fig_secondary_outcomes():
+def secondary_outcomes():
     rows = 2
     fig = plt.figure(figsize=(15, 7.5))
     figrows = fig.subfigures(rows, 1, hspace=0.0)
@@ -189,15 +187,15 @@ def fig_secondary_outcomes():
     )
 
     # Save
-    figfile = os.path.join(resultspath, 'fig_secondary_outcomes.png')
+    figfile = os.path.join(resultspath, 'secondary_outcomes.png')
     plt.savefig(fname=figfile)
     plt.close()
 
 
 def primary_outcomes_box_plot_rel(ax):
 
-    file = os.path.join(tablespath, 'rel_effect_size_wide.csv')
-    effect = pd.read_csv(file).set_index('subject')
+    file = os.path.join(tablespath, 'effect_size_relative.csv')
+    effect = pd.read_csv(file, index_col=0)
 
     lbls = ['k(he)', 'k(bh)']
     data = [
@@ -245,8 +243,8 @@ def primary_outcomes_box_plot_rel(ax):
 
 def primary_outcomes_box_plot_abs(ax):
 
-    file = os.path.join(tablespath, 'abs_effect_size_wide.csv')
-    effect = pd.read_csv(file).set_index('subject')
+    file = os.path.join(tablespath, 'effect_size_absolute.csv')
+    effect = pd.read_csv(file, index_col=0) 
 
     #pars = effect.parameter.unique()
     lbls = ['k(he)', '10 x k(bh)']
@@ -303,11 +301,11 @@ def primary_outcomes_line_plot(ax, par):
     file = os.path.join(tablespath, 'vals_drug.csv')
     vals_drug = pd.read_csv(file).set_index('parameter')
 
-    file = os.path.join(tablespath, 'stdev_control.csv')
-    stdev_control = pd.read_csv(file).set_index('parameter')
+    # file = os.path.join(tablespath, 'stdev_control.csv')
+    # stdev_control = pd.read_csv(file).set_index('parameter')
 
-    file = os.path.join(tablespath, 'stdev_drug.csv')
-    stdev_drug = pd.read_csv(file).set_index('parameter')
+    # file = os.path.join(tablespath, 'stdev_drug.csv')
+    # stdev_drug = pd.read_csv(file).set_index('parameter')
 
     # Setup plot
     fontsize=20
@@ -339,7 +337,7 @@ def primary_outcomes_line_plot(ax, par):
         #ax.errorbar(x, y, yerr=yerr, fmt='o', capsize=5)
 
 
-def fig_primary_outcomes():
+def primary_outcomes():
 
     cols = 2
     fig = plt.figure(figsize=(15, 7.5))
@@ -363,88 +361,13 @@ def fig_primary_outcomes():
     primary_outcomes_line_plot(axes[1], 'kbh')
 
     # Save
-    figfile = os.path.join(resultspath, 'fig_primary_outcomes.png')
+    figfile = os.path.join(resultspath, 'primary_outcomes.png')
     plt.savefig(fname=figfile)
     plt.close()
 
 
-def correlation_heatmap(filename, cols=None):
 
-    file = os.path.join(tablespath, filename + '_vals.csv')
-    vals = pd.read_csv(file).set_index('X')
-    file = os.path.join(tablespath, filename + '_pval.csv')
-    pval = pd.read_csv(file).set_index('X')
-
-    # vals = np.abs(vals)
-    # vmin, center, vmax = 0, 0.5, 1.0
-    vmin, center, vmax = -1, 0, 1.0
-
-    fontsize = 16 
-
-    vmin, center, vmax = -1, 0, 1.0
-    cmap = "viridis"
-    cmap = 'tab20b'
-    #cmap = "cool"
-    
-    sig = 0.05
-    #sig = 1.0
-    mask = pval>sig
-    #mask = mask | (vals<0.5)
-    #mask = vals<0.5
-
-    select = False
-
-    if select:
-        accept = (pval<sig) & (vals != 1) 
-        accept_rows = accept.any(axis=0)
-        vals = vals.loc[:,accept_rows]
-        pval = pval.loc[:,accept_rows]
-        mask = mask.loc[:,accept_rows]
-        accept = accept.loc[:,accept_rows]
-        
-        accept_cols = accept.any(axis=1)
-        vals = vals.loc[accept_cols,:]
-        pval = pval.loc[accept_cols,:]
-        mask = mask.loc[accept_cols,:]
-        accept = accept.loc[accept_cols,:]
-
-    if cols is not None:
-        vals = vals[cols]
-        mask = mask[cols]
-
-    fig, ax = plt.subplots(1,1,figsize=(16,16))
-    #fig.subplots_adjust(left=0.2,right=0.95, bottom=0.4, top=0.95)
-    # Draw the full plot
-    #h = sns.heatmap(vals.T, center=center, vmin=vmin, vmax=vmax, cmap=cmap, alpha=0.25, cbar=False, xticklabels=False, yticklabels=False)
-    g = sns.heatmap(
-        vals.T, 
-        linewidths=0.5, 
-        linecolor='black',
-        center=center, 
-        vmin=vmin, 
-        vmax=vmax, 
-        cmap=cmap, 
-        alpha=1.0, 
-        mask=mask.T, 
-        xticklabels=True, 
-        yticklabels=True,
-    )
-    #g = sns.heatmap(vals.T, center=center, vmin=vmin, vmax=vmax, cmap=cmap, alpha=1.0, xticklabels=True, yticklabels=True)
-    xpar = g.get_xmajorticklabels()
-    ypar = g.get_ymajorticklabels()
-    xlbl = data.lookup_vals([p._text for p in xpar], 'label')
-    ylbl = data.lookup_vals([p._text for p in ypar], 'label')
-    g.set_xticklabels(xlbl, rotation=90, fontsize=fontsize)
-    g.set_yticklabels(ylbl, rotation=0, fontsize=fontsize)
-    ax.set_ylabel('')
-    ax.set_xlabel('')
-
-    file = os.path.join(resultspath, filename + '.png')
-    plt.savefig(fname=file)
-    plt.close()
-
-
-def correlation_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,1], title=''):
+def correlation_effect_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,1], title=''):
 
     file = os.path.join(tablespath, filename + '_vals.csv')
     vals = pd.read_csv(file).set_index('X')
@@ -547,7 +470,7 @@ def correlation_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,1], titl
                 )
 
     # Create the colorbar
-    if filename == 'corr_liver':
+    if filename == 'corr_liver_effect':
         # Define the colorbar axis position: [left, bottom, width, height]
         cbar_ax = g.fig.add_axes([.05, .25, .03, .5])
         Colorbar(cbar_ax, g.ax_heatmap.collections[0], orientation='vertical')
@@ -560,37 +483,37 @@ def correlation_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,1], titl
     if cols is not None:
         g.ax_heatmap.set_yticklabels([])
 
-    file = os.path.join(resultspath, 'clustered_' + filename + '.png')
+    file = os.path.join(resultspath, filename + '.png')
     plt.savefig(fname=file)
     plt.close()
 
     return xpar
 
 
-def fig_correlations():
+def correlations_effect():
 
-    pars = correlation_clustermap('corr_liver', title='Liver', xfigsize=16, pos=[0.15, 0.15, 0.7, 0.75]) # [left, bottom, width, height]
-    correlation_clustermap('corr_liver_aorta', title='Aorta', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
-    correlation_clustermap('corr_liver_blood', title='LFT', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
+    pars = correlation_effect_clustermap('corr_liver_effect', title='Liver', xfigsize=16, pos=[0.15, 0.15, 0.7, 0.75]) # [left, bottom, width, height]
+    correlation_effect_clustermap('corr_aorta_effect', title='Aorta', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
+    correlation_effect_clustermap('corr_blood_effect', title='LFT', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
 
     fig = plt.figure(figsize=(28, 15))
     subfigs = fig.subfigures(1, 3, wspace=0.0, width_ratios=[1.9, 0.7, 0.7])
     
-    img0 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver.png'))
+    img0 = mpimg.imread(os.path.join(resultspath, 'corr_liver_effect.png'))
     ax = subfigs[0].subplots(1,1)
     ax.imshow(img0)
     ax.axis('off')
-    img1 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_aorta.png'))
+    img1 = mpimg.imread(os.path.join(resultspath, 'corr_aorta_effect.png'))
     ax = subfigs[2].subplots(1,1)
     ax.imshow(img1)
     ax.axis('off')
-    img2 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_blood.png'))
+    img2 = mpimg.imread(os.path.join(resultspath, 'corr_blood_effect.png'))
     ax = subfigs[1].subplots(1,1)
     ax.imshow(img2)
     ax.axis('off')
 
     # Save
-    figfile = os.path.join(resultspath, 'fig_correlations.png')
+    figfile = os.path.join(resultspath, 'correlations_effect.png')
     plt.tight_layout()
     plt.savefig(fname=figfile)
     plt.close()
@@ -699,7 +622,7 @@ def correlation_control_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,
                 )
 
     # Create the colorbar
-    if filename == 'corr_liver_control':
+    if filename == 'corr_control':
         # Define the colorbar axis position: [left, bottom, width, height]
         cbar_ax = g.fig.add_axes([.05, .25, .03, .5])
         Colorbar(cbar_ax, g.ax_heatmap.collections[0], orientation='vertical')
@@ -712,54 +635,54 @@ def correlation_control_clustermap(filename, cols=None, xfigsize=16, pos=[0,0,1,
     if cols is not None:
         g.ax_heatmap.set_yticklabels([])
 
-    file = os.path.join(resultspath, 'clustered_' + filename + '.png')
+    file = os.path.join(resultspath, filename + '.png')
     plt.savefig(fname=file)
     plt.close()
 
     return xpar
 
 
-def fig_control_correlations():
+def correlations_control():
 
-    pars = correlation_control_clustermap('corr_liver_control', title='Liver', xfigsize=16, pos=[0.15, 0.15, 0.7, 0.75]) # [left, bottom, width, height]
-    correlation_control_clustermap('corr_liver_aorta_control', title='Aorta', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
-    correlation_control_clustermap('corr_liver_blood_control', title='LFT', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
-    correlation_control_clustermap('corr_liver_screening', title='Screening', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
+    pars = correlation_control_clustermap('corr_control', title='Liver', xfigsize=16, pos=[0.15, 0.15, 0.7, 0.75]) # [left, bottom, width, height]
+    correlation_control_clustermap('corr_aorta_control', title='Aorta', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
+    correlation_control_clustermap('corr_blood_control', title='LFT', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
+    correlation_control_clustermap('corr_screening', title='Screening', cols=pars, xfigsize=6, pos=[0.05, 0.15, 0.90, 0.75])
 
     fig = plt.figure(figsize=(28, 15))
     subfigs = fig.subfigures(1, 4, wspace=0.0, width_ratios=[1.85, 0.7, 0.7, 0.7])
     
-    img0 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_control.png'))
+    img0 = mpimg.imread(os.path.join(resultspath, 'corr_control.png'))
     ax = subfigs[0].subplots(1,1)
     ax.imshow(img0)
     ax.axis('off')
-    img1 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_aorta_control.png'))
+    img1 = mpimg.imread(os.path.join(resultspath, 'corr_aorta_control.png'))
     ax = subfigs[2].subplots(1,1)
     ax.imshow(img1)
     ax.axis('off')
-    img2 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_blood_control.png'))
+    img2 = mpimg.imread(os.path.join(resultspath, 'corr_blood_control.png'))
     ax = subfigs[1].subplots(1,1)
     ax.imshow(img2)
     ax.axis('off')
-    img3 = mpimg.imread(os.path.join(resultspath, 'clustered_corr_liver_screening.png'))
+    img3 = mpimg.imread(os.path.join(resultspath, 'corr_screening.png'))
     ax = subfigs[3].subplots(1,1)
     ax.imshow(img3)
     ax.axis('off')
 
     # Save
-    figfile = os.path.join(resultspath, 'fig_correlations_control.png')
+    figfile = os.path.join(resultspath, 'correlations_control.png')
     plt.tight_layout()
     plt.savefig(fname=figfile)
     plt.close()
 
 
-def fig_clustering():
+def clustering():
 
-    file = os.path.join(tablespath, 'abs_effect_size_wide.csv')
-    vals = pd.read_csv(file).set_index('subject')
+    file = os.path.join(tablespath, 'effect_size_absolute.csv')
+    vals = pd.read_csv(file, index_col=0)
     vals = (vals - vals.mean())/vals.std(ddof=0)
     vals = vals.dropna(axis=1, how='any')
-    vars = set(vals.columns) - set(calc.EXCLUDE_CORREL) - set(data.EXCLUDE_EFFECT) - set(data.NO_EFFECT)
+    vars = set(vals.columns) - set(data.EXCLUDE_EFFECT)
     vals = vals[list(vars)]
     vals = vals.rename(lambda x: 'Delta ' + data.lookup_vals(x, 'label'), axis=1)
     vals.index = [str(i) for i in vals.index]
@@ -768,7 +691,7 @@ def fig_clustering():
     vals0 = pd.read_csv(file).set_index('parameter').T
     vals0 = (vals0 - vals0.mean())/vals0.std(ddof=0)
     vals0 = vals0.dropna(axis=1, how='any')
-    vars0 = set(vals0.columns) - set(calc.EXCLUDE_CORREL) - set(data.EXCLUDE_EFFECT) - set(data.NO_EFFECT)
+    vars0 = set(vals0.columns) - set(data.EXCLUDE_EFFECT)
     vals0 = vals0[list(vars0)]
     vals0 = vals0.rename(lambda x: data.lookup_vals(x, 'label'), axis=1)
     vals0 = vals0.loc[vals.index]
@@ -779,7 +702,7 @@ def fig_clustering():
     vals0 = pd.read_csv(file).set_index('parameter').T
     vals0 = (vals0 - vals0.mean())/vals0.std(ddof=0)
     vals0 = vals0.dropna(axis=1, how='any')
-    vars0 = set(vals0.columns) - set(calc.EXCLUDE_CORREL) - set(data.EXCLUDE_EFFECT) - set(data.NO_EFFECT)
+    vars0 = set(vals0.columns) - set(data.EXCLUDE_EFFECT)
     vals0 = vals0[list(vars0)]
     vals0 = vals0.rename(lambda x: data.lookup_vals(x, 'label'), axis=1)
     vals0 = vals0.loc[vals.index]
@@ -805,21 +728,18 @@ def fig_clustering():
         # col_cluster=True,
     )
 
-    file = os.path.join(resultspath, 'fig_clustering.png')
+    file = os.path.join(resultspath, 'clustering.png')
     plt.savefig(fname=file)
     plt.close()
 
 
 def main():
 
-    fig_primary_outcomes()
-    fig_secondary_outcomes()
-    fig_control_correlations()
-    fig_clustering()
-    fig_correlations()
-    # correlation_heatmap('corr_liver')
-    # correlation_heatmap('corr_liver_aorta')
-    # correlation_heatmap('corr_liver_blood')
+    primary_outcomes()
+    secondary_outcomes()
+    correlations_control()
+    correlations_effect()
+    clustering()
 
 
 if __name__=='__main__':

@@ -1,7 +1,7 @@
 import os
 import miblab
 
-root = os.getcwd()
+root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     # Cover and title pages
     doc = miblab.Report(
         path,
-        'report',
+        'Report',
         title = 'Predicting liver-mediated drug-drug interactions with MRI: A first-in-human study',
         subtitle = 'Results',
         subject = 'Internal report',
@@ -24,7 +24,7 @@ def main():
     doc.chapter('Figures')
 
     doc.figure( 
-        os.path.join(figpath, 'fig_primary_outcomes.png'),
+        os.path.join(figpath, 'primary_outcomes.png'),
         clearpage=True,
         caption = (
             "Visualisation of the primary endpoints khe and kbh across "
@@ -38,7 +38,7 @@ def main():
         ),
     )
     doc.figure(
-        os.path.join(figpath, 'fig_secondary_outcomes.png'),
+        os.path.join(figpath, 'secondary_outcomes.png'),
         clearpage=True,
         caption = (
             "drug effect for all parameters that show a "
@@ -49,14 +49,14 @@ def main():
         ),
     )
     doc.figure(
-        os.path.join(figpath, 'fig_correlations_control.png'),
+        os.path.join(figpath, 'correlations_control.png'),
         clearpage=True,
         caption = (
             "Correlations between parameters at control."  
         ),
     )
     doc.figure(
-        os.path.join(figpath, 'fig_correlations.png'),
+        os.path.join(figpath, 'correlations_effect.png'),
         clearpage=True,
         caption = (
             "Correlations between parameter changes." 
@@ -70,7 +70,7 @@ def main():
         caption = 'Demographics of the study population.'
     )
     doc.table(
-        os.path.join(tablepath, 'table_lft_visits.csv'),
+        os.path.join(tablepath, 'table_lft_between_visits.csv'),
         caption = 'LFT changes between both visits.',
         clearpage=True,
     )
@@ -88,7 +88,7 @@ def main():
     doc.chapter('Supplements')
 
     doc.figure(
-        os.path.join(figpath, 'fig_clustering.png'),
+        os.path.join(figpath, 'clustering.png'),
         caption = (
             "Clustering of parameters and subjects." 
         ),
