@@ -17,7 +17,7 @@ When dealing with novel drugs, either in basic research or drug development, it 
 
 In order to mitigate these risks, the [TRISTAN project](https://www.imi-tristan.eu/) developed an MRI-based method to measure the effect of drugs in liver transporters directly. An [analysis pipeline](https://zenodo.org/records/15512551) was developed which generates measurements from signal-time curves in liver and aorta. 
 
-The pipeline in this repository was used to derive results in the first-in-human study, which measured the effect of the drug rifampicin on the biomarkers produced by the assay, as measurement in 8 healthy volunteers. 
+The pipeline in this repository was used to derive results in the first-in-human study, which measured the effect of the drug rifampicin on the biomarkers produced by the assay, in 8 healthy volunteers. 
 
 ## 🛠️ Methodology 
 
