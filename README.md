@@ -4,7 +4,7 @@
 
 ## An MRI-assay for drug-induced inhibition of liver transporters: first-in-human study
 
-[![Code License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=apache&color=blue)](https://www.apache.org/licenses/LICENSE-2.0) [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/) 
+[![Code License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=apache&color=blue)](https://www.apache.org/licenses/LICENSE-2.0) [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/) [![Jupyter Notebook](https://img.shields.io/badge/Notebook-Jupyter-orange?logo=jupyter)](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb)
 
 
 ## 📚 Context 
@@ -38,12 +38,12 @@ pip install -r requirements.txt
 
 The folder *build* contains the output of the analysis. To reproduce it, delete the *build* folder and run the script **src/run.py**. This takes less than a minute on a standard laptop computer and should recreate all results in the *build* folder.
 
-Alternatively run the jupyter notebook **src/run.ipynb** which reproduces all results interactively and has explanations and results interleaved with the code for better understanding of the metholodology.
+Alternatively run the jupyter notebook [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb) which reproduces all results interactively and has explanations and results interleaved with the code for better understanding of the metholodology.
 
 
 ## 	📄 Code structure
 
-The **src** folder contains all the source code, with the top level entry scripts *run.py* and [run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb). These call functions in the subfolder *stages*.
+The **src** folder contains all the source code, with the top level entry scripts *run.py* and [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb). These call functions in the subfolder *stages*.
 
 The **build** folder contains the output of the top level scripts. It can be deleted and will be fully rebuilt when running the script. The *build* folder has the following contents: 
 
