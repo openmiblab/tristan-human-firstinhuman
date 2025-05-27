@@ -2,7 +2,7 @@
 
 ---
 
-## Measuring drug-induced inhibition of liver transporters: first-in-human study
+## An MRI-assay for drug-induced inhibition of liver transporters: first-in-human study
 
 [![Code License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=apache&color=blue)](https://www.apache.org/licenses/LICENSE-2.0) [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/) 
 
