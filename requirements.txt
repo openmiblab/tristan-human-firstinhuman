@@ -1,8 +1,12 @@
 numpy
-pandas
-pingouin
 pydmr
 miblab[report,data]
+pandas
 matplotlib
 seaborn
+pingouin
+
+
+
+
 
