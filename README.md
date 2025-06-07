@@ -4,7 +4,7 @@
 
 ## An MRI-assay for drug-induced inhibition of liver transporters: first-in-human study
 
-[![Code License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=apache&color=blue)](https://www.apache.org/licenses/LICENSE-2.0) [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/) [![Jupyter Notebook](https://img.shields.io/badge/Notebook-Jupyter-orange?logo=jupyter)](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb) [![DOI](https://zenodo.org/badge/976527970.svg)](https://doi.org/10.5281/zenodo.15530697)
+[![Code License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=apache&color=blue)](https://www.apache.org/licenses/LICENSE-2.0) [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/) [![Jupyter Notebook](https://img.shields.io/badge/Notebook-Jupyter-orange?logo=jupyter)](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb) [![DOI](https://zenodo.org/badge/976527970.svg)](https://doi.org/10.5281/zenodo.15530697) [![Input Data](https://img.shields.io/badge/input%20data-Zenodo-3776AB?logo=databricks&logoColor=white)](https://zenodo.org/records/15610350) [![Input Data](https://img.shields.io/badge/input%20data-Zenodo-3776AB?logo=databricks&logoColor=white)](https://zenodo.org/records/15610541)
 
 
 ## 📚 Context 
@@ -21,9 +21,11 @@ The pipeline in this repository was used to derive results in the first-in-human
 
 ## 🛠️ Methodology 
 
-The **inputs** to the pipeline are metrics produced by the assay for primary and secondary objectives, saved in a [persistent data archive](https://zenodo.org/records/15514373) as three separate datasets:
+The **inputs** to the pipeline are metrics produced by the assay for primary and secondary objectives, saved in a [persistent data archive](https://zenodo.org/records/15610350) as two separate datasets:
 - *tristan_humans_healthy_rifampicin_all_results*: MRI biomarkers in subjects with successful treatment visits
 - *tristan_humans_healthy_controls_all_results*: MRI biomarkers in subjects with baseline visits only.
+
+Also source data on the study participants such as basic demographics and liver function tests, saved in the [source data archive](https://zenodo.org/records/15610541) of the study as:
 - *tristan_humans_healthy_rifampicin_data*: clinical covariates such as demographics and blood-based liver function tests in all subjects.
 
 The **output** is the effect of the drugs on primary and secondary endpoints, as well as results for additional questions such as correlations between baseline values and with effect sizes measured by conventional liver function tests. The pipeline computes the statistics and generates tables and figures for internal reporting and inclusion in the publication.
@@ -36,21 +38,21 @@ The pipeline can be run after installing the requirements:
 pip install -r requirements.txt
 ```
 
-The folder *build* contains the output of the analysis. To reproduce it, delete the *build* folder and run the script **src/run.py**. This takes less than a minute on a standard laptop computer and should recreate all results in the *build* folder.
+The folder **build** contains the output of the analysis. To reproduce it, delete the **build** folder and run the script **src/run.py**. This takes less than a minute on a standard laptop computer and should recreate all results in the *build* folder.
 
-Alternatively run the jupyter notebook [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb) which reproduces all results interactively and has explanations and results interleaved with the code for better understanding of the metholodology.
+Alternatively run the jupyter notebook [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb) which reproduces all results interactively and has explanations and results interleaved with the code for better understanding of the methodology.
 
 
 ## 	📄 Code structure
 
-The **src** folder contains all the source code, with the top level entry scripts *run.py* and [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb). These call functions in the subfolder *stages*.
+The **src** folder contains all the source code, with the top level entry scripts **run.py** and [src/run.ipynb](https://github.com/openmiblab/tristan-human-stage-3-analysis/blob/main/src/run.ipynb). These call functions in the subfolder *stages*.
 
-The **build** folder contains the output of the top level scripts. It can be deleted and will be fully rebuilt when running the script. The *build* folder has the following contents: 
+The **build** folder contains the output of the top level scripts. It can be deleted and will be fully rebuilt when running the script. The **build** folder has the following contents: 
 
-- *Report.pdf* is a compact summary of all key outputs. It is built in LaTeX and the folder *Report_source* contains the source LaTeX files.
-- *Data*: contains the downloaded data and their modifications by the script *src/stages/data.py*.
-- *Figs*: Figures produced by *src/stages/plot.py*.
-- *Tables*: tables and numerical results produced by *src/stages/desc.py* and *src/stages/calc.py*.
+- **Report.pdf** is a compact summary of all key outputs. It is built in LaTeX and the folder **Report_source** contains the source LaTeX files.
+- **Data**: contains the downloaded data and their modifications by the script **src/stages/data.py**.
+- **Figs**: Figures produced by **src/stages/plot.py**.
+- **Tables**: tables and numerical results produced by **src/stages/desc.py** and **src/stages/calc.py**.
 
 
 ## ❤️ Citation 
